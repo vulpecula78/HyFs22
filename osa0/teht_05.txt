@@ -1,0 +1,19 @@
+
+title Teht. 0.5
+
+Selain -> Palvelin: GET Request https://studies.cs.helsinki.fi/exampleapp/spa
+Palvelin --> Selain: Lähetä HTML
+Selain  -> Palvelin: GET Request https://studies.cs.helsinki.fi/exampleapp/main.css
+Palvelin  --> Selain: Lähetä main.css
+Selain -> Palvelin: GET Request https://studies.cs.helsinki.fi/exampleapp/spa.js
+Palvelin  --> Selain: Lähetä spa.js
+
+note over Selain: 
+Suoritetaan js koodia.
+Pyydetään hakemaan data.json:
+xhttp.open("GET", "/exampleapp/data.json", true)
+end note over 
+
+Selain -> Palvelin: GET Request https://studies.cs.helsinki.fi/exampleapp/data.json
+Palvelin --> Selain: Lähetä data.json
+note over Selain: Tulostetaan data.json sisältö näytölle.

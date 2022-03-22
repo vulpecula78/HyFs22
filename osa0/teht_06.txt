@@ -1,0 +1,9 @@
+title Teht. 0.6
+
+Selain -> Palvelin: POST Request https://studies.cs.helsinki.fi/exampleapp/spa
+Palvelin --> Selain: Response: "note created"
+
+note over Selain:
+Saadaan palvelimelta vastaus "Note created".
+Lisätään viesti näytölle.
+end note over 
