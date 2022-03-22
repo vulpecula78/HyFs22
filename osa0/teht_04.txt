@@ -1,0 +1,15 @@
+title Teht. 0.4
+
+Selain -> Palvelin: POST Request https://studies.cs.helsinki.fi/exampleapp/new_note
+note over Palvelin: Palvelin saa POST pyynnön mukana tulevan tiedon. Vastauksena redirect.
+Palvelin --> Selain: Response: redirect to /exampleapp/new_note
+Selain  -> Palvelin: GET Request https://studies.cs.helsinki.fi/exampleapp/notes
+Palvelin  --> Selain: Lähetä HTML
+Selain -> Palvelin: GET Request https://studies.cs.helsinki.fi/exampleapp/main.css
+Palvelin  --> Selain: Lähetä main.css
+Selain -> Palvelin: GET Request https://studies.cs.helsinki.fi/exampleapp/main.js
+Palvelin --> Selain: Lähetä main.js
+note over Selain: Suoritetaan js koodia.
+Selain -> Palvelin: GET Request https://studies.cs.helsinki.fi/exampleapp/data.json
+Palvelin --> Selain: Lähetä data.json
+note over Selain: Tulostetaan data.json sisältö näytölle.
