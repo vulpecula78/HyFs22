@@ -14,6 +14,7 @@ const App = () => {
   
   const handleGoodClick = () => (
     setGood(good + 1)
+    setAll(all + 1)
   )
   
   const handleNeutralClick = () => (
