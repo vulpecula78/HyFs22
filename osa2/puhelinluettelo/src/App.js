@@ -26,26 +26,10 @@ const Person = ( {persons, filterName} ) => {
   )
 }
 
-const AddName = (props) => {
-  const addName = (event) => {
-    event.preventDefault()
-    const nameObject = {
-      name: props.newName,
-      number: props.newNumber
-    }
-
-    if (props.persons.find(( {name} ) =>
-      name === props.newName)) {
-        alert(`${props.newName} already added to phonebook`)
-      } else {
-        props.setPersons(props.persons.concat(nameObject))
-        props.setNewName('')
-        props.setNewNumber('')
-      }
-  }
+const PersonForm = (props) => {
   return (
     <div>
-      <form onSubmit={addName}>      
+      <form onSubmit={props.addName}>
         <div>
           name: <input value={props.newName} onChange={props.addNewName} />
         </div>
@@ -71,12 +55,10 @@ const App = () => {
   
   const addNewName = (event) => {
     setNewName(event.target.value)
-    console.log(event.target)
   }
 
   const addNewNumber = (event) => {
     setNewNumber(event.target.value)
-    console.log(newNumber)
   }
   
   const addFilterName = (event) => {
@@ -105,20 +87,10 @@ const App = () => {
       <h2>Phonebook</h2>
       <Filter filterName={filterName} addFilterName={addFilterName} />
       <h2>add a new</h2>
-      <AddName newName={newName} addNewName={addNewName} newNumber={newNumber}
-        addNewNumber={addNewNumber} persons={persons} setPersons={setPersons}
-        setNewName={setNewName} />
-      <form onSubmit={addName}>      
-        <div>
-          name: <input value={newName} onChange={addNewName} />
-        </div>
-        <div>
-          number: <input value={newNumber} onChange={addNewNumber} />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <PersonForm addName={addName}
+        newName={newName} addNewName={addNewName}
+        newNumber={newNumber} addNewNumber={addNewNumber}
+        />
       <h2>Numbers</h2>
       <Person persons={persons} filterName={filterName} />
     </div>
