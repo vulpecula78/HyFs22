@@ -9,16 +9,8 @@ const FindCountry = ( {countryFilter, addCountryFilter} ) => {
   )
 }
 
-const Countries = ( {country} ) => {
-  return (
-    <div>
-      {country.name.common}
-    </div>
-  )
-}
 
-
-const ShowCountry = ( {selectedCountry} ) => {
+const ShowCountry = ( {selectedCountry, handleClick} ) => {
   if (selectedCountry.length === 1) {
     console.log(selectedCountry)
     const country = selectedCountry[0]
@@ -37,7 +29,10 @@ const ShowCountry = ( {selectedCountry} ) => {
   } else if (selectedCountry.length < 11) {
     return (
       <div>
-        {selectedCountry.map(country => <Countries key={country.name.common} country={country} />)}
+        {selectedCountry.map(country =>
+          <div key={country.name.common}>
+            {country.name.common} &nbsp;
+            <button value={country.name.common} onClick={handleClick}>Show</button></div>)}
       </div>
     )
   } else {
@@ -70,14 +65,21 @@ const App = () => {
   const addCountryFilter = (event) => {
     setCountryFilter(event.target.value)
     setSelectedCountry(countries.filter(cFilter =>
-    cFilter.name.common.toLowerCase().includes(event.target.value.toLowerCase())))
+      cFilter.name.common.toLowerCase().includes(event.target.value.toLowerCase())))
     console.log(selectedCountry.length + ' now selected')
   }
+
+  const handleClick = (event) => {
+    setCountryFilter(event.target.value)
+    setSelectedCountry(countries.filter(cFilter =>
+      cFilter.name.common.includes(event.target.value)))
+  }
+
 
   return (
     <div>
         <FindCountry countryFilter={countryFilter} addCountryFilter={addCountryFilter} ShowCountries />
-        <ShowCountry selectedCountry={selectedCountry} />
+        <ShowCountry selectedCountry={selectedCountry} handleClick={handleClick} />
     </div>
   )
 }
