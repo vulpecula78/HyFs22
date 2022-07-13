@@ -24,6 +24,8 @@ const ShowCountry = ( {selectedCountry, handleClick} ) => {
           {Object.values(country.languages).map(lang => <li key={lang}>{lang}</li>)}
         </ul>
         <img src={country.flags.png} alt='country flag' />
+        <br />
+        <Weather city={country.capital} />
       </div>
     )
   } else if (selectedCountry.length < 11) {
@@ -44,6 +46,44 @@ const ShowCountry = ( {selectedCountry, handleClick} ) => {
   }
 }
 
+const Weather = ( {city} ) => {
+  const api_key = process.env.REACT_APP_API_KEY
+  const [weather, setWeather] = useState("")
+
+  const toCelsius = (kelvin) => {
+    return (kelvin - 273.15).toFixed(2)
+  }
+
+  const weatherHook = () => {
+    console.log('Weather effect')
+    axios
+      .get(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${api_key}`)
+      .then(response => {
+        console.log('promise fulfilled!')
+        setWeather(response.data)
+      })
+  }
+
+  useEffect(weatherHook, [api_key, city, setWeather])
+
+  console.log(weather.main)
+
+  if (weather) {
+    const icon = new URL(`http://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`)
+    return (
+      <div>
+        <h3>Weather in {city}</h3>
+        <p>
+          Temperature {toCelsius(weather.main.temp)}&deg;C
+        </p>
+          <img src={icon} alt='weather icon' />
+        <p>
+          Wind: {weather.wind.speed} m/s
+        </p>
+      </div>
+    )
+  }
+}
 
 const App = () => {
   const [countries, setCountries] = useState([])
@@ -66,7 +106,7 @@ const App = () => {
     setCountryFilter(event.target.value)
     setSelectedCountry(countries.filter(cFilter =>
       cFilter.name.common.toLowerCase().includes(event.target.value.toLowerCase())))
-    console.log(selectedCountry.length + ' now selected')
+    console.log(selectedCountry.length + ' selected')
   }
 
   const handleClick = (event) => {
