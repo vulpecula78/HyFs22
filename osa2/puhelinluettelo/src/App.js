@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
 import personService from './services/persons'
 
-const RenderPerson = ( {person} ) => {
+const RenderPerson = ( {person, deleteName} ) => {
   return (
     <div>
-      {person.name} {person.number}
+      {person.name} {person.number} &nbsp;
+      <button onClick={() =>
+        deleteName(person.id, person.name)}>delete</button>
     </div>
   )
 }
@@ -19,11 +21,11 @@ const Filter = ( {filterName, addFilterName} ) => {
   )
 }
 
-const Person = ( {persons, filterName} ) => {
+const Person = ( {persons, filterName, deleteName} ) => {
   return (
     persons.filter(nameFilter => 
     nameFilter.name.toLowerCase().includes(filterName.toLowerCase()))
-    .map(person => <RenderPerson key={person.name} person={person} />)
+    .map(person => <RenderPerson key={person.name} person={person} deleteName={deleteName} />)
   )
 }
 
@@ -92,6 +94,23 @@ const App = () => {
       }
   }
 
+  const deleteName = (id, name) => {
+    console.log('Delete name with id ' + id)
+    if (window.confirm(`Really delete ${name}`)) {
+      personService
+        .deletePerson(id)
+        .then(response => {
+          console.log(response)
+          setPersons(persons.filter(person => person.id !== id))
+        })
+        .catch(error => {
+          console.log(`the person '${name}' was already deleted`)
+        })
+    } else {
+      console.log('Cancel')
+    }
+  }
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -102,7 +121,7 @@ const App = () => {
         newNumber={newNumber} addNewNumber={addNewNumber}
         />
       <h2>Numbers</h2>
-      <Person persons={persons} filterName={filterName} />
+      <Person persons={persons} filterName={filterName} deleteName={deleteName} />
     </div>
   )
 }
