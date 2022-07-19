@@ -52,6 +52,8 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filterName, setFilterName] = useState('')
+  const [message, setMessage] = useState(null)
+  const [errorMesg, setErrorMesg] = useState(false)
   
   useEffect(() => {
     personService
@@ -71,6 +73,32 @@ const App = () => {
   
   const addFilterName = (event) => {
     setFilterName(event.target.value)
+  }
+
+  const timer = () => {
+    setTimeout(() => {
+      setMessage(null)
+      setErrorMesg(false)
+    }, 4000)
+  }
+
+  const Notification = ( {message} ) => {
+    if (message === null) {
+      return null
+    }
+
+    if (errorMesg) {
+      return (
+        <div className='error'>
+          {message}
+        </div>
+      )
+    } else {
+    return (
+      <div className='message'>
+        {message}
+      </div>
+    )}
   }
 
   const addName = (event) => {
@@ -94,8 +122,15 @@ const App = () => {
               ))
               setNewName('')
               setNewNumber('')
-              console.log(changedPerson)
-          })
+              setMessage(`Number updated for ${person.name}`)
+              timer()
+            })
+            .catch(error => {
+              setErrorMesg(true)
+              setMessage(`Information of ${person.name} has already been removed from server!`)
+              setPersons(persons.filter(listed => listed.id !== person.id))
+              timer()
+            })
         }
       } else {
         personService
@@ -104,9 +139,18 @@ const App = () => {
             setPersons(persons.concat(addedPerson))
             setNewName('')
             setNewNumber('')
+            setMessage(`Added ${newName}`)
+            timer()
         })
+        .catch(error => {
+          setErrorMesg(true)
+          setMessage(`${newName} already added!`)
+          setPersons(persons.filter(listed => listed.name === newName))
+        })
+        timer()
       }
-  }
+    }
+
 
   const deleteName = (id, name) => {
     console.log('Delete name with id ' + id)
@@ -116,9 +160,13 @@ const App = () => {
         .then(response => {
           console.log(response)
           setPersons(persons.filter(person => person.id !== id))
+          setMessage(`${name} deleted`)
+          timer()
         })
         .catch(error => {
-          console.log(`the person '${name}' was already deleted`)
+          setErrorMesg(true)
+          setMessage(`the person '${name}' was already deleted`)
+          timer()
         })
     } else {
       console.log('Cancel')
@@ -128,6 +176,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message} />
       <Filter filterName={filterName} addFilterName={addFilterName} />
       <h2>add a new</h2>
       <PersonForm addName={addName}
@@ -141,4 +190,3 @@ const App = () => {
 }
 
 export default App
-
