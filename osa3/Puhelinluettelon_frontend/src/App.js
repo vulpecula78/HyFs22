@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import personService from './services/persons'
 
 const RenderPerson = ( {person, deleteName} ) => {
@@ -143,8 +143,9 @@ const App = () => {
             timer()
         })
         .catch(error => {
+          console.log(error.response.data)
           setErrorMesg(true)
-          setMessage(`Failed to  add ${newName}!`)
+          setMessage(`${error.response.data.error}`)
           setPersons(persons.filter(listed => listed.name !== newName))
         })
         timer()
