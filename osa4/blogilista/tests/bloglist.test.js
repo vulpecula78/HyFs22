@@ -44,7 +44,12 @@ beforeEach(async() => {
 
 test('GET returns correct amount of blogs in json-format.', async() => {
   const response = await api.get('/api/blogs')
-    expect(response.body).toHaveLength(initialBlogs.length)
+  expect(response.body).toHaveLength(initialBlogs.length)
+})
+
+test('id field is defined', async() => {
+  const response = await api.get('/api/blogs')
+  expect(response.body[0].id).toBeDefined()
 })
 
 afterAll(() => {
