@@ -2,116 +2,118 @@ const supertest = require('supertest')
 const mongoose = require('mongoose')
 const app = require('../app')
 const Blog = require('../models/bloglist')
+const helper = require('./test_helper')
 
 const api = supertest(app)
 
-const initialBlogs = [
-  {
-    _id: '5a422a851b54a676234d17f7',
-    title: 'React patterns',
-    author: 'Michael Chan',
-    url: 'https://reactpatterns.com/',
-    likes: 7,
-    __v: 0
-  },
-  {
-    _id: '5a422aa71b54a676234d17f8',
-    title: 'Go To Statement Considered Harmful',
-    author: 'Edsger W. Dijkstra',
-    url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
-    likes: 5,
-    __v: 0
-  },
-  {
-    _id: '5a422b3a1b54a676234d17f9',
-    title: 'Canonical string reduction',
-    author: 'Edsger W. Dijkstra',
-    url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
-    likes: 12,
-    __v: 0
-  }
-]
-
 beforeEach(async() => {
   await Blog.deleteMany({})
-  let blogObj = new Blog(initialBlogs[0])
+  let blogObj = new Blog(helper.initialBlogs[0])
   await blogObj.save()
-  blogObj = new Blog(initialBlogs[1])
+  blogObj = new Blog(helper.initialBlogs[1])
   await blogObj.save()
-  blogObj = new Blog(initialBlogs[2])
+  blogObj = new Blog(helper.initialBlogs[2])
   await blogObj.save()
 })
 
-test('GET returns correct amount of blogs in json-format.', async() => {
-  const response = await api.get('/api/blogs')
-  expect(response.body).toHaveLength(initialBlogs.length)
+describe('Tests for getting blogs and id field is defined', () => {
+  test('GET returns correct amount of blogs in json-format.', async() => {
+    const response = await api.get('/api/blogs')
+    expect(response.body).toHaveLength(helper.initialBlogs.length)
+  })
+
+  test('id field is defined', async() => {
+    const response = await api.get('/api/blogs')
+    expect(response.body[0].id).toBeDefined()
+  })
 })
 
-test('id field is defined', async() => {
-  const response = await api.get('/api/blogs')
-  expect(response.body[0].id).toBeDefined()
+describe('Tests adding new valid and unvalid blogs', () => {
+  test('Blogs can be added into database', async() => {
+
+    await api
+      .post('/api/blogs')
+      .send(helper.newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const response = await api.get('/api/blogs')
+    expect(response.body).toHaveLength(helper.initialBlogs.length + 1)
+  })
+
+  test('Number of likes is set to zero, if no value given', async() => {
+
+    await api
+      .post('/api/blogs')
+      .send(helper.noLikesBlog)
+      .expect(201)
+
+    const response = await api.get('/api/blogs')
+    expect(response.body[3].likes).toBe(0)
+  })
+
+  test('Adding blog with missing url produces \'bad request\'', async() => {
+
+    await api
+      .post('/api/blogs')
+      .send(helper.noUrlBlog)
+      .expect(400)
+  })
+
+  test('Adding blog with missing title produces \'bad request\'', async() => {
+
+    await api
+      .post('/api/blogs')
+      .send(helper.noTitleBlog)
+      .expect(400)
+  })
 })
 
-test('Blogs can be added into database', async() => {
-  const newBlog = {
-    title: 'React testaus',
-    author: 'ML',
-    url: 'https://fullstackjutut.fi/',
-    likes: 11
-  }
+describe('Tests deleting blog by id', () => {
+  test('Delete blog with valid id', async() => {
+    await api
+      .delete('/api/blogs/5a422a851b54a676234d17f7')
+      .expect(204)
+    const response = await api.get('/api/blogs')
+    expect(response.body).toHaveLength(helper.initialBlogs.length - 1)
+  })
 
-  await api
-    .post('/api/blogs')
-    .send(newBlog)
-    .expect(201)
-    .expect('Content-Type', /application\/json/)
+  test('Delete blog with invalid id', async() => {
+    await api
+      .delete('/api/blogs/5a422a85b54a676234d17f7')
+      .expect(400)
+  })
 
-  const response = await api.get('/api/blogs')
-  expect(response.body).toHaveLength(initialBlogs.length + 1)
+  test('Delete non-excisting blog with valid id', async() => {
+    await api
+      .delete('/api/blogs/5aff2a851b54a676234d17f7')
+      .expect(204)
+    const response = await api.get('/api/blogs')
+    expect(response.body).toHaveLength(helper.initialBlogs.length)
+  })
 })
 
-test('Number of likes is set to zero, if no value given', async() => {
-  const newBlog = {
-    title: 'React testaus2',
-    author: 'ML',
-    url: 'https://fullstackjutut.fi/'
-  }
+describe('Tests editing blogs works', () => {
+  test('edit blog with valid id', async() => {
+    await api
+      .put('/api/blogs/5a422b3a1b54a676234d17f9')
+      .send(helper.editedBlog)
+      .expect(200)
 
-  await api
-    .post('/api/blogs')
-    .send(newBlog)
-    .expect(201)
+    const response = await api.get('/api/blogs')
+    expect(response.body[2].likes).toBe(127)
+  })
 
-  const response = await api.get('/api/blogs')
-  expect(response.body[3].likes).toBe(0)
-})
-
-test("Adding blog with missing url produces 'bad request'", async() => {
-  const newBlog = {
-      title: 'React testaus',
-      author: 'ML',
-      likes: 11
-    }
-
-  await api
-    .post('/api/blogs')
-    .send(newBlog)
-    .expect(400)
-})
-
-test("Adding blog with missing title produces 'bad request'", async() => {
-  const newBlog = {
-      author: 'ML',
-      url: 'https://fullstackjutut.fi/',
-      likes: 11
-    }
-
-  await api
-    .post('/api/blogs')
-    .send(newBlog)
-    .expect(400)
+  test('edit blog with invalid id', async() => {
+    await api
+      .put('/api/blogs/5a422b3a1b54aw76234d17f9')
+      .send(helper.editedBlog)
+      .expect(400)
+  })
 })
 
 afterAll(() => {
   mongoose.connection.close()
 })
+
+
