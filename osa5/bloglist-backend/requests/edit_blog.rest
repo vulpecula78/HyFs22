@@ -1,0 +1,8 @@
+PUT http://localhost:3003/api/blogs/63356d6469dfb1922f11b7c2
+Content-Type: application/json
+{
+    "title": "muutettu",
+    "author": "Muuttaja",
+    "url": "www.www.www",
+    "likes": "500"
+}

@@ -1,0 +1,11 @@
+POST http://localhost:3003/api/blogs/
+Content-Type: application/json
+authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlRlc3RpbWllczIiLCJpZCI6IjYzNjM3ZmNmMDk5NTNmODljZWZiNTQyYiIsImlhdCI6MTY2NzgyMzY5M30.FaWCqtoEzUhjSydBFGGoQKNHHkOSwC2Obw3p_kDy6T4
+
+{
+  "title": "Taas yks testi",
+  "author": "Testi Testaaja",
+  "url": "www.netti.fi/testataan",
+  "likes": 420,
+  "user": "63624d5f15022b8270f91a9d"
+}
