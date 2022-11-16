@@ -58,8 +58,10 @@ const App = () => {
   const addNewBlog = async(newBlog) => {
     try {
       const addedBlog = await blogService.createBlog(newBlog)
-      setBlogs(blogs.concat(addedBlog))
+
       blogFormRef.current.toggleVisibility()
+      setBlogs(blogs.concat(addedBlog))
+      updateBlogList()
       setMessage(`New blog ${newBlog.title} by ${newBlog.author} added`)
           setTimeout(() => {
             setMessage(null) }, 5000)
@@ -69,6 +71,42 @@ const App = () => {
           setMessage(null) }, 5000)
     }
   }
+
+  const handleLikes = async(blog) => {
+    console.log('liked:', blog.id)
+    try {
+      const liked = await blogService.updateBlog(blog.id, blog)
+      blogService.getAll().then(blogs => setBlogs( blogs ))
+      setMessage(`You liked ${liked.title} by ${liked.author}.`)
+          setTimeout(() => {
+            setMessage(null) }, 5000)
+    } catch (exception) {
+      setMessage('error! failed to like.')
+        setTimeout(() => {
+          setMessage(null) }, 5000)
+    }
+  }
+
+  const handleRemove = async(blog) => {
+    if (window.confirm(`Really remove blog: ${blog.title}???`)) {
+      try {
+        const removed = await blogService.removeBlog(blog.id)
+        blogService.getAll().then(blogs => setBlogs( blogs ))
+          setMessage(`You liked ${removed.title} by ${removed.author}.`)
+            setTimeout(() => {
+              setMessage(null) }, 5000)
+        } catch (exception) {
+          setMessage('error! failed to like.')
+            setTimeout(() => {
+              setMessage(null) }, 5000)
+      }
+    }
+  }
+
+  const updateBlogList = () => {
+    blogService.getAll().then(blogs => setBlogs( blogs ))
+  }
+
 
 
   const loginForm = () => (
@@ -108,8 +146,8 @@ const App = () => {
           <AddNewBlogForm addNewBlog={addNewBlog} user={user} />
         </p>
       </Togglable>
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+      {blogs.sort((a, b) => b.likes - a.likes).map(blog =>
+        <Blog key={blog.id} blog={blog} handleLikes={handleLikes} handleRemove={handleRemove} user={user}/>
       )}
 
     </div>
