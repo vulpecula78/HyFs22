@@ -76,7 +76,7 @@ const App = () => {
     console.log('liked:', blog.id)
     try {
       const liked = await blogService.updateBlog(blog.id, blog)
-      blogService.getAll().then(blogs => setBlogs( blogs ))
+      updateBlogList()
       setMessage(`You liked ${liked.title} by ${liked.author}.`)
           setTimeout(() => {
             setMessage(null) }, 5000)
@@ -91,7 +91,7 @@ const App = () => {
     if (window.confirm(`Really remove blog: ${blog.title}???`)) {
       try {
         const removed = await blogService.removeBlog(blog.id)
-        blogService.getAll().then(blogs => setBlogs( blogs ))
+        updateBlogList()
           setMessage(`You liked ${removed.title} by ${removed.author}.`)
             setTimeout(() => {
               setMessage(null) }, 5000)
@@ -106,8 +106,6 @@ const App = () => {
   const updateBlogList = () => {
     blogService.getAll().then(blogs => setBlogs( blogs ))
   }
-
-
 
   const loginForm = () => (
     <form onSubmit={handleLogin}>
