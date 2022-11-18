@@ -26,7 +26,7 @@ const Blog = ({ blog, handleLikes, handleRemove, user }) => {
   if (hidden) {
     return (
       <div style={blogStyle}>
-        {blog.title} &nbsp; by {blog.author} &nbsp; <button onClick={() => setHidden(false)}>show</button> <br />
+        {blog.title} by {blog.author} &nbsp; <button onClick={() => setHidden(false)}>show</button> <br />
       </div>
     )
   }
