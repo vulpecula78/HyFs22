@@ -34,10 +34,14 @@ const Blog = ({ blog, handleLikes, handleRemove, user }) => {
   return(
     <div style={blogStyle}>
       {blog.title} &nbsp; by {blog.author} &nbsp; <button onClick={() => setHidden(true)}>hide</button> <br />
-      {blog.url} <br />
-      Likes: {blog.likes} <button onClick={() => addLike()}>like</button> <br />
+      <div>
+        {blog.url}
+      </div>
+      <div>
+        Likes: {blog.likes} <button onClick={() => addLike()}>like</button>
+      </div>
       {blog.user.name} <br />
-      {user.username === blog.user.username ? <button onClick={() => handleRemove(blog)}>remove</button> : <br /> }
+      {user !== 'test' || user.username === blog.user.username ? <button onClick={() => handleRemove(blog)}>remove</button> : <br /> }
     </div>
   )
 }
