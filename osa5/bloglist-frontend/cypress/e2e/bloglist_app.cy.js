@@ -33,6 +33,7 @@ describe('Blog app', function() {
       cy.get('#password').type('kalasana')
       cy.get('#login').click()
 
+      cy.get('.error').contains('wrong')
       cy.contains('Log in to application')
     })
   })
